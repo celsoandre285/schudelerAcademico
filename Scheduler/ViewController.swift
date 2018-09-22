@@ -16,11 +16,24 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        
+        let nc = UNUserNotificationCenter.current()
+        
+        nc.requestAuthorization(options: [.alert, .sound]) { (accept, error) in
+            if(accept){
+                print("temos permissao para enviar notificacao")
+                return
+            }
+            print("usuario nao nos deu permissao para enviar a notificacao")
+        }
+        
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
+        
+      
     }
     
     func createNotification(on date:Date){
@@ -33,10 +46,24 @@ class ViewController: UIViewController {
         let nc = UNUserNotificationCenter.current()
         
         // passo 1 criacao do gatilho
-        let trigger = UNCalendarNotificationTrigger(dateMatching: <#T##DateComponents#>, repeats: false)
+        let trigger = UNCalendarNotificationTrigger(dateMatching: date.compoments, repeats: false)
+        
         // passo 2 criacao  notificacao
+        let notificationContent = UNMutableNotificationContent()
+        notificationContent.title = "Notificacao Calendario"
+        notificationContent.body = "Notificacao local teste de hora marcada"
+        notificationContent.sound = UNNotificationSound.default()
+        
         // passo 3 criacao da requisicao da notificacao
+        let notificationRequest = UNNotificationRequest(identifier: "nHorario", content: notificationContent, trigger: trigger)
+        
         // passo 4 adicao da requisicao de notificacao a fila de notificacao
+        nc.removeAllPendingNotificationRequests()
+        
+        //add a nova notificacao na fila
+        nc.add(notificationRequest, withCompletionHandler: nil)
+        
+        NSLog("Adicionei uma nova requisicao a fila")
         
         
         
@@ -47,5 +74,18 @@ class ViewController: UIViewController {
         let date = sender.date
         createNotification(on: date)
     }
+}
+
+//criando um extensio para converter Date em DateComponents
+extension Date{
+    var compoments : DateComponents{
+        let calendar = Calendar(identifier: .gregorian)
+        let dateComponents = calendar.dateComponents(in: .current, from: self)
+        
+        let finalCompoments = DateComponents(calendar: calendar, timeZone: .current ,month: dateComponents.month, day: dateComponents.day, hour: dateComponents.hour, minute: dateComponents.minute)
+        
+        return finalCompoments
+    }
+    
 }
 
