@@ -48,11 +48,23 @@ class ViewController: UIViewController {
         // passo 1 criacao do gatilho
         let trigger = UNCalendarNotificationTrigger(dateMatching: date.compoments, repeats: false)
         
+        //passo 1-2 criando e registrando uma categoria para a nossa notificacao
+        // criaremos um botao e o associamos a uma categoria
+        
+        let rememberAction = UNNotificationAction(identifier: "action_remember", title: "lembrar mais tarde", options: [.foreground])
+        
+        let category = UNNotificationCategory(identifier: "categoria_remember", actions: [rememberAction], intentIdentifiers: [], options: [])
+
+        nc.setNotificationCategories([category])
+        
         // passo 2 criacao  notificacao
         let notificationContent = UNMutableNotificationContent()
         notificationContent.title = "Notificacao Calendario"
         notificationContent.body = "Notificacao local teste de hora marcada"
         notificationContent.sound = UNNotificationSound.default()
+        
+        //passo 02-2: Atribuindo uma categoria a notificacao
+        notificationContent.categoryIdentifier =  "categoria_remember"
         
         // passo 3 criacao da requisicao da notificacao
         let notificationRequest = UNNotificationRequest(identifier: "nHorario", content: notificationContent, trigger: trigger)
