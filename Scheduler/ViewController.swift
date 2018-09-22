@@ -27,6 +27,8 @@ class ViewController: UIViewController {
             print("usuario nao nos deu permissao para enviar a notificacao")
         }
         
+        nc.delegate = self
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -88,6 +90,18 @@ class ViewController: UIViewController {
     }
 }
 
+extension ViewController : UNUserNotificationCenterDelegate{
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        if response.actionIdentifier == "action_remember"{
+            let newDate = Date(timeInterval: 61.0, since: Date())
+            print("Agendando uma nova data")
+            createNotification(on: newDate)
+        }
+        completionHandler()
+    }
+}
+
+
 //criando um extensio para converter Date em DateComponents
 extension Date{
     var compoments : DateComponents{
@@ -100,4 +114,5 @@ extension Date{
     }
     
 }
+
 
